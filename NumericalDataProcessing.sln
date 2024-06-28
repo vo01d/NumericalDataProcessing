@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NumericalDataProcessing", "NumericalDataProcessing\NumericalDataProcessing.vcxproj", "{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}.Debug|x64.ActiveCfg = Debug|x64
+		{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}.Debug|x64.Build.0 = Debug|x64
+		{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}.Debug|x86.ActiveCfg = Debug|Win32
+		{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}.Debug|x86.Build.0 = Debug|Win32
+		{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}.Release|x64.ActiveCfg = Release|x64
+		{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}.Release|x64.Build.0 = Release|x64
+		{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}.Release|x86.ActiveCfg = Release|Win32
+		{FC2B4609-E50F-4E68-A2AA-BDBDD1D36FBD}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {112BF7A6-082B-4410-8A28-3BCFAB51046E}
+	EndGlobalSection
+EndGlobal
