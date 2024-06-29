@@ -25,7 +25,7 @@ NumericalFileInfo::NumericalFileInfo(std::string filepath) : m_filepath(filepath
 }
 
 std::ostream& operator<<(std::ostream& out, const NumericalFileInfo& right) {
-	out.precision(14);
+	out.precision(13);
 	out << "File info: " << std::endl;
 	out << "Filepath: " << right.m_filepath << std::endl;
 	out << "Data size: " << right.m_dataSize << std::endl;
