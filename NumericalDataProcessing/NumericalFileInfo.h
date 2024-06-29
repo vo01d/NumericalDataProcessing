@@ -8,11 +8,24 @@ class NumericalFileInfo {
 public:
 	using data_t = long long;
 
-	NumericalFileInfo(std::string filepath);
-	friend std::ostream& operator <<(std::ostream& out, const NumericalFileInfo& right);
+	NumericalFileInfo(std::string);
+	friend std::ostream& operator <<(std::ostream&, const NumericalFileInfo&);
 	// other methods
 	// ...
 private:
+	struct Sequence {
+		Sequence(size_t begin = 0, size_t end = 1) : m_begin(begin), m_end(end) {
+		}
+		friend bool operator >(const Sequence& left, const Sequence& right) {
+			return (left.m_end - left.m_begin) > (right.m_end - right.m_begin);
+		}
+		friend bool operator <(const Sequence& left, const Sequence& right) {
+			return !(left > right);
+		}
+		size_t m_begin;
+		size_t m_end;
+	};
+
 	std::string m_filepath;
 	size_t m_dataSize;
 	data_t m_min;
@@ -23,8 +36,9 @@ private:
 	std::vector<data_t> m_LCIS;
 	std::vector<data_t> m_LCDS;
 
-	void initializeData(std::vector<data_t>& fileData);
-	size_t getSequenceSize(const std::pair<size_t, size_t>& sequence);
+	void initializeData(std::vector<data_t>&);
+	void updateSequence(const std::vector<data_t>&, const size_t, Sequence&, Sequence&, const bool);
+	void initializeMedian(std::vector<data_t>&);
 };
 
 #endif 

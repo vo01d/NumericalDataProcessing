@@ -53,41 +53,41 @@ void NumericalFileInfo::initializeData(std::vector<data_t>& fileData) {
 	m_min = m_max = m_sum = fileData[0];
 
 	// (C)LCIS - (Current) Longest Continuous Increasing Subsequence
-	std::pair<size_t, size_t> LCIS(0, 1), CLCIS(0, 1);
+	Sequence LCIS, CLCIS;
 	// (C)LCDS - (Current) Longest Continuous Decreasing Subsequence
-	std::pair<size_t, size_t> LCDS(0, 1), CLCDS(0, 1);
+	Sequence LCDS, CLCDS;
 
 	for (size_t i = 1; i < fileData.size(); ++i) {
 		m_min = std::min(m_min, fileData[i]);
 		m_max = std::max(m_max, fileData[i]);
 		m_sum += fileData[i];
 
-		if (fileData[i - 1] < fileData[i]) {
-			++CLCIS.second;
-			if (getSequenceSize(CLCIS) > getSequenceSize(LCIS)) {
-				LCIS = CLCIS;
-			}
-		}
-		else {
-			CLCIS = std::pair<size_t, size_t>(i, i + 1);
-		}
-
-		if (fileData[i - 1] > fileData[i]) {
-			++CLCDS.second;
-			if (getSequenceSize(CLCDS) > getSequenceSize(LCDS)) {
-				LCDS = CLCDS;
-			}
-		}
-		else {
-			CLCDS = std::pair<size_t, size_t>(i, i + 1);
-		}
+		updateSequence(fileData, i, LCIS, CLCIS, true);
+		updateSequence(fileData, i, LCDS, CLCDS, false);
 	}
 
 	m_arithmeticMean = m_sum / static_cast<double>(m_dataSize);
 
-	m_LCIS.insert(m_LCIS.end(), fileData.begin() + LCIS.first, fileData.begin() + LCIS.second);
-	m_LCDS.insert(m_LCDS.end(), fileData.begin() + LCDS.first, fileData.begin() + LCDS.second);
+	m_LCIS.insert(m_LCIS.end(), fileData.begin() + LCIS.m_begin, fileData.begin() + LCIS.m_end);
+	m_LCDS.insert(m_LCDS.end(), fileData.begin() + LCDS.m_begin, fileData.begin() + LCDS.m_end);
 
+	initializeMedian(fileData);
+}
+
+void NumericalFileInfo::updateSequence(const std::vector<data_t>& fileData, const size_t index, Sequence& longestSequence,
+	Sequence& currentSequence, const bool isIncreasing) {
+	if ((isIncreasing && fileData[index - 1] < fileData[index]) || (!isIncreasing && fileData[index - 1] > fileData[index])) {
+		++currentSequence.m_end;
+		if (currentSequence > longestSequence) {
+			longestSequence = currentSequence;
+		}
+	}
+	else {
+		currentSequence = Sequence(index, index + 1);
+	}
+}
+
+void NumericalFileInfo::initializeMedian(std::vector<data_t>& fileData) {
 	std::nth_element(fileData.begin(), fileData.begin() + m_dataSize / 2, fileData.end());
 	if (m_dataSize % 2 == 0) {
 		std::nth_element(fileData.begin(), fileData.begin() + (m_dataSize - 1) / 2, fileData.end());
@@ -96,8 +96,4 @@ void NumericalFileInfo::initializeData(std::vector<data_t>& fileData) {
 	else {
 		m_median = fileData[m_dataSize / 2];
 	}
-}
-
-size_t NumericalFileInfo::getSequenceSize(const std::pair<size_t, size_t>& sequence) {
-	return sequence.second - sequence.first;
 }
