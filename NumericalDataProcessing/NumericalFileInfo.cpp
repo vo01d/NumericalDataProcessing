@@ -1,8 +1,8 @@
 #include "NumericalFileInfo.h"
 
 #include <algorithm>
-#include <fstream>
 #include <iostream>
+#include <fstream>
 
 NumericalFileInfo::NumericalFileInfo(std::string filepath) : m_filepath(filepath) {
 	std::ifstream inputFile(m_filepath);
@@ -21,7 +21,7 @@ NumericalFileInfo::NumericalFileInfo(std::string filepath) : m_filepath(filepath
 		throw std::runtime_error("Error: File is empty!");
 	}
 
-	initializeData(fileData);
+	initialize(fileData);
 }
 
 std::ostream& operator<<(std::ostream& out, const NumericalFileInfo& right) {
@@ -30,8 +30,8 @@ std::ostream& operator<<(std::ostream& out, const NumericalFileInfo& right) {
 	out << "Filepath: " << right.m_filepath << std::endl;
 	out << "Data size: " << right.m_dataSize << std::endl;
 	out << "Sum: " << right.m_sum << std::endl;
-	out << "Max number: " << right.m_max << std::endl;
 	out << "Min number: " << right.m_min << std::endl;
+	out << "Max number: " << right.m_max << std::endl;
 	out << "Median: " << right.m_median << std::endl;
 	out << "Arithmetic mean: " << right.m_arithmeticMean << std::endl;
 	out << "Longest Continuous Increasing Subsequence size: " << right.m_LCIS.size() << std::endl;
@@ -48,42 +48,43 @@ std::ostream& operator<<(std::ostream& out, const NumericalFileInfo& right) {
 	return out;
 }
 
-void NumericalFileInfo::initializeData(std::vector<data_t>& fileData) {
+void NumericalFileInfo::initialize(std::vector<data_t>& fileData) {
 	m_dataSize = fileData.size();
 	m_min = m_max = m_sum = fileData[0];
 
 	// (C)LCIS - (Current) Longest Continuous Increasing Subsequence
-	Sequence LCIS, CLCIS;
+	Range LCIS, CLCIS;
 	// (C)LCDS - (Current) Longest Continuous Decreasing Subsequence
-	Sequence LCDS, CLCDS;
+	Range LCDS, CLCDS;
 
-	for (size_t i = 1; i < fileData.size(); ++i) {
-		m_min = std::min(m_min, fileData[i]);
-		m_max = std::max(m_max, fileData[i]);
-		m_sum += fileData[i];
+	for (size_t index = 1; index < fileData.size(); ++index) {
+		m_min = std::min(m_min, fileData[index]);
+		m_max = std::max(m_max, fileData[index]);
+		m_sum += fileData[index];
 
-		updateSequence(fileData, i, LCIS, CLCIS, true);
-		updateSequence(fileData, i, LCDS, CLCDS, false);
+		trackLCS(fileData, index, LCIS, CLCIS, true);
+		trackLCS(fileData, index, LCDS, CLCDS, false);
 	}
 
 	m_arithmeticMean = m_sum / static_cast<double>(m_dataSize);
 
-	m_LCIS.insert(m_LCIS.end(), fileData.begin() + LCIS.m_begin, fileData.begin() + LCIS.m_end);
-	m_LCDS.insert(m_LCDS.end(), fileData.begin() + LCDS.m_begin, fileData.begin() + LCDS.m_end);
+	m_LCIS.assign(fileData.begin() + LCIS.m_begin, fileData.begin() + LCIS.m_end);
+	m_LCDS.assign(fileData.begin() + LCDS.m_begin, fileData.begin() + LCDS.m_end);
 
 	initializeMedian(fileData);
 }
 
-void NumericalFileInfo::updateSequence(const std::vector<data_t>& fileData, const size_t index, Sequence& longestSequence,
-	Sequence& currentSequence, const bool isIncreasing) {
-	if ((isIncreasing && fileData[index - 1] < fileData[index]) || (!isIncreasing && fileData[index - 1] > fileData[index])) {
-		++currentSequence.m_end;
-		if (currentSequence > longestSequence) {
-			longestSequence = currentSequence;
+void NumericalFileInfo::trackLCS(const std::vector<data_t>& fileData, const size_t index, Range& LCS,
+	Range& CLCS, const bool isSubsequenceIncreasing) {
+	if ((isSubsequenceIncreasing && fileData[index - 1] < fileData[index]) 
+		|| (!isSubsequenceIncreasing && fileData[index - 1] > fileData[index])) {
+		++CLCS.m_end;
+		if (CLCS > LCS) {
+			LCS = CLCS;
 		}
 	}
 	else {
-		currentSequence = Sequence(index, index + 1);
+		CLCS = Range(index, index + 1);
 	}
 }
 
